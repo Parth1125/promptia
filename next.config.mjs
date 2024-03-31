@@ -7,7 +7,6 @@ const nextConfig = {
     config.experiments = {
       ...config.experiments,
       topLevelAwait: true,
-      missingSuspenseWithCSRBailout: false,
     };
     return config;
   },
