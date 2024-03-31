@@ -7,6 +7,9 @@ export const connectToDb = async () => {
     console.log("MongoDB is already connected");
     return;
   }
+  if (!process.env.MONGODB_URI) {
+    throw new Error("MONGODB_URI is not defined");
+  }
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
       dbName: "share_prompt",

@@ -1,7 +1,7 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import Form from "@components/Form";
 import Loading from "@app/Loading";
@@ -10,21 +10,28 @@ const EditPrompt = () => {
   const [submitting, setsubmitting] = useState(false);
   const router = useRouter();
   //   const { data: session } = useSession();
-  const searchParams = useSearchParams();
-  const promptId = searchParams.get("id");
+  // const promptId = router.query.id; // Accessing the 'id' query parameter using useRouter
+  const [promptId, setPromptId] = useState(null);
   const [post, setpost] = useState({
     prompt: "",
     tag: "",
   });
 
   useEffect(() => {
-    const getPromptDetails = async () => {
-      const response = await fetch(`/api/prompt/${promptId}`);
-      const data = await response.json();
-      setpost({ prompt: data.prompt, tag: data.tag });
-    };
-    if (promptId) getPromptDetails();
-  }, [promptId]);
+    // Check if the router is ready and if the id is present in the query
+    if (router.isReady) {
+      const queryId = router.query.id;
+      if (queryId) {
+        setPromptId(queryId);
+        const getPromptDetails = async () => {
+          const response = await fetch(`/api/prompt/${queryId}`);
+          const data = await response.json();
+          setPost({ prompt: data.prompt, tag: data.tag });
+        };
+        getPromptDetails();
+      }
+    }
+  }, [router.isReady, router.query]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
@@ -48,15 +55,13 @@ const EditPrompt = () => {
     }
   };
   return (
-    <Suspense fallback={<Loading />}>
-      <Form
-        type="Edit"
-        post={post}
-        setpost={setpost}
-        submitting={submitting}
-        handleSubmit={updatePrompt}
-      />
-    </Suspense>
+    <Form
+      type="Edit"
+      post={post}
+      setpost={setpost}
+      submitting={submitting}
+      handleSubmit={updatePrompt}
+    />
   );
 };
 
