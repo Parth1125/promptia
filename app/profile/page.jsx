@@ -18,7 +18,7 @@ const MyProfile = () => {
     };
     if (session?.user.id) fetchPosts();
   }, []);
-  console.log(Posts);
+
   const handleEdit = (post) => {
     router.push(`/update-prompt?id=${post._id}`);
   };

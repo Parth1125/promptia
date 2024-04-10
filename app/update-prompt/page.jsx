@@ -1,16 +1,17 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 // import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import Form from "@components/Form";
 import Loading from "@app/Loading";
 
 const EditPrompt = () => {
   const [submitting, setsubmitting] = useState(false);
+  const params = useSearchParams();
   const router = useRouter();
-  //   const { data: session } = useSession();
-  // const promptId = router.query.id; // Accessing the 'id' query parameter using useRouter
+  const id = params?.get("id");
+
   const [promptId, setPromptId] = useState(null);
   const [post, setpost] = useState({
     prompt: "",
@@ -18,30 +19,17 @@ const EditPrompt = () => {
   });
 
   useEffect(() => {
-    // Check if the router is ready and if the id is present in the query
-    if (router.isReady) {
-      const queryId = router.query.id;
-      if (queryId) {
-        setPromptId(queryId);
-        const getPromptDetails = async () => {
-          try {
-            const response = await fetch(`/api/prompt/${queryId}`);
-            if (!response.ok) {
-              throw new Error(`Error: ${response.statusText}`);
-            }
-            const data = await response.json();
-            setpost({ prompt: data.prompt, tag: data.tag });
-          } catch (error) {
-            console.error("Failed to fetch prompt details:", error);
-          }
-          const response = await fetch(`/api/prompt/${queryId}`);
-          const data = await response.json();
-          setpost({ prompt: data.prompt, tag: data.tag });
-        };
-        getPromptDetails();
-      }
+    if (id) {
+      setPromptId(id);
+      const getPromptDetails = async () => {
+        const response = await fetch(`/api/prompt/${id}`);
+        const data = await response.json();
+        setpost({ prompt: data.prompt, tag: data.tag });
+      };
+      getPromptDetails();
     }
-  }, [router.isReady, router.query]);
+  }, []);
+  // debugger;
 
   const updatePrompt = async (e) => {
     e.preventDefault();
@@ -65,13 +53,15 @@ const EditPrompt = () => {
     }
   };
   return (
-    <Form
-      type="Edit"
-      post={post}
-      setpost={setpost}
-      submitting={submitting}
-      handleSubmit={updatePrompt}
-    />
+    <Suspense>
+      <Form
+        type="Edit"
+        post={post}
+        setpost={setpost}
+        submitting={submitting}
+        handleSubmit={updatePrompt}
+      />
+    </Suspense>
   );
 };
 

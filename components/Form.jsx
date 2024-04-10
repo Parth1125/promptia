@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 const Form = ({ type, post, setpost, submitting, handleSubmit }) => {
+  console.log(post, "form post");
   return (
     <section className="w-full max-w-full flex-start flex-col">
       <h1 className="head_text text-left">
