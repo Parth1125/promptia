@@ -24,6 +24,16 @@ const EditPrompt = () => {
       if (queryId) {
         setPromptId(queryId);
         const getPromptDetails = async () => {
+          try {
+            const response = await fetch(`/api/prompt/${queryId}`);
+            if (!response.ok) {
+              throw new Error(`Error: ${response.statusText}`);
+            }
+            const data = await response.json();
+            setpost({ prompt: data.prompt, tag: data.tag });
+          } catch (error) {
+            console.error("Failed to fetch prompt details:", error);
+          }
           const response = await fetch(`/api/prompt/${queryId}`);
           const data = await response.json();
           setpost({ prompt: data.prompt, tag: data.tag });
