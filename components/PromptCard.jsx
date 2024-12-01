@@ -16,6 +16,13 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
     setTimeout(() => setcopied(""), 3000);
   };
 
+  const copyAndRedirect = async () => {
+    setcopied(post.prompt);
+    await navigator.clipboard.writeText(post.prompt);
+    window.open("https://chat.openai.com/", "_blank");
+    setTimeout(() => setcopied(""), 3000);
+  };
+
   return (
     <div className="prompt_card">
       <div className="flex justify-between items-start gap-5">
@@ -38,17 +45,35 @@ const PromptCard = ({ post, handleTagClick, handleEdit, handleDelete }) => {
           </div>
         </div>
 
-        <div className="copy_btn" onClick={handleCopy}>
-          <Image
-            src={
-              copied === post.prompt
-                ? "/assets/icons/tick.svg"
-                : "/assets/icons/copy.svg"
-            }
-            width={12}
-            alt="user_image"
-            height={12}
-          />
+        <div className="flex gap-2">
+          <div
+            className="copy_btn"
+            onClick={handleCopy}
+            title={copied === post.prompt ? "Copied!" : "Copy"}
+          >
+            <Image
+              src={
+                copied === post.prompt
+                  ? "/assets/icons/tick.svg"
+                  : "/assets/icons/copy.svg"
+              }
+              width={12}
+              alt="copy_icon"
+              height={12}
+            />
+          </div>
+          <div
+            className="copy_btn"
+            onClick={copyAndRedirect}
+            title="Copy and open in ChatGPT"
+          >
+            <Image
+              src="/assets/icons/chatgpt-icon.svg"
+              width={12}
+              alt="chatgpt_icon"
+              height={12}
+            />
+          </div>
         </div>
       </div>
 
